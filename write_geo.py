@@ -12,47 +12,47 @@ import geojson
 from iptcinfo3 import IPTCInfo
 
 metadata = pd.read_csv("/mnt/d/situated-views-etl/data/output/metadata.csv")
-# current_features = (geojson.load(
-#     open("/mnt/d/situated-views-etl/data/output/import_viewcones.geojson"))).features
+images = "/mnt/d/Tasks/Image classification/images"
+current_features = (geojson.load(
+    open("/mnt/d/situated-views-etl/data/output/import_viewcones.geojson"))).features
 pictures = "/mnt/c/Users/Pit/Pictures"
 metadata = metadata.loc[metadata["Source"] == "Instituto Moreira Salles"]
 df_geo = metadata.loc[metadata["Latitude"].notna()]
 ids_geo = (df_geo["Source ID"]).to_list()
 ids_tags = {x: ["geo"] for x in ids_geo}
-# print(ids_tags)
 
-# folder_list = [(re.search(r"\.0_(.*).jpg", x)).group(1)
-#                for x in os.listdir(pictures) if x.endswith(".jpg")]
-
-# list_folder = [x.split("_geo")[0] if x.endswith("_geo") else x
-#                for x in folder_list]
+features = [x.properties["Source ID"]
+            for x in current_features if x.properties["Source"] == "Instituto Moreira Salles"]
+print(len(features))
 
 
-def add_tag(folder, list_ids, tag):
+def add_tag(folder, items_list, tag_list):
+    """ Add tag by given list with relatioship between item and tags"""
     geo = []
-    out = []
-    # folder_list = [x.split(".jpg")[0] if not x.endswith(
-    #     "_geo.jpg") else x.split("_geo.jpg")[0] for x in os.listdir(folder)]
+    for img in tqdm(os.listdir(folder)):
+        for item in items_list:
+            if img.endswith(item.upper()+".jpg") or img.endswith(item + ".jpg"):
+                path_from = folder+"/"+img
+                path_to = path_from.split(".jpg")[0]+"_geo.jpg"
+                os.rename(path_from, path_to)
+                # path = folder+"/"+img
+                # info = IPTCInfo(path)
+                # for tag in tag_list:
+                #     if tag.encode('UTF-8') not in info['keywords']:
+                #         info['keywords'].append(tag)
 
-    for img in os.listdir(folder):
-        for id in list_ids:
-            if img.endswith(id.upper()+".jpg") or img.endswith(id + ".jpg"):
-                geo.append(id)
+                # info.save()
+                # info.save_as(path)
+                # geo.append(item)
             # else:
             #     out.append(id)
 
     return geo
-# print(ids_folder)
-    # for identifier in list_ids:
-
-    #     if name.endswith("_geo"):
-    #         name = name.split("_geo.jpg")[0]
 
 
-print(len(ids_geo))
-g = add_tag(pictures, ids_geo, "geo")
+g = add_tag(images, ids_geo, ["geo"])
 print(len(g))
-print(" OR ".join(list(set(ids_geo) - set(g))))
-#not_ = add_tag(pictures, ids_tags)
-# print(not_)
-# update_tag(pictures,tags)
+# print(" OR ".join(list(set(ids_geo) - set(g))))
+# #not_ = add_tag(pictures, ids_tags)
+# # print(not_)
+# # update_tag(pictures,tags)
