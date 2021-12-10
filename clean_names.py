@@ -4,7 +4,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import re
 
-#images_test = os.listdir("/mnt/d/Tasks/Image classification/images_test")
+images = "/mnt/d/Tasks/Image classification/images"
 fenrir = "/mnt/e/Tasks/Vistas Situadas - Imagens/20211207FenrirFS_bk"
 pictures = "/mnt/c/Users/Pit/Pictures"
 
@@ -30,4 +30,4 @@ def clean_geo_name(folder):
             os.rename(folder+"/" + img, folder+"/" + name)
 
 
-clean_geo_name(pictures)
+clean_geo_name(images)
